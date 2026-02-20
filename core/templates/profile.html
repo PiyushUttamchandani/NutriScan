@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-12 animate-fade-in">
+    
+    <div class="mb-10">
+        <div class="bg-white rounded-[3.5rem] shadow-2xl shadow-slate-100 border border-slate-50 overflow-hidden group max-w-2xl mx-auto">
+            <div class="h-32 bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-500 relative">
+                <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </div>
+            
+            <div class="px-8 pb-12 text-center">
+                <div class="relative -mt-16 mb-6 inline-block">
+                    <div class="absolute inset-0 bg-emerald-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
+                    <div class="relative w-32 h-32 bg-white rounded-full p-2 shadow-xl ring-4 ring-white">
+                        <div class="w-full h-full bg-slate-50 rounded-full flex items-center justify-center text-5xl">
+                            👤
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 class="text-3xl font-black text-slate-800 mb-1 leading-tight">{{ user.username }}</h3>
+                <div class="inline-flex items-center px-5 py-2 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-full border border-emerald-100 mb-10 uppercase tracking-widest">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
+                    {{ profile.get_goal_display }}
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+                    <div class="p-5 bg-slate-50 rounded-[2.2rem] border border-slate-100 transition-all hover:bg-emerald-50/50 hover:shadow-inner">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Age</p>
+                        <span class="text-xl font-black text-slate-800">{{ profile.age }}</span>
+                    </div>
+                    <div class="p-5 bg-slate-50 rounded-[2.2rem] border border-slate-100 transition-all hover:bg-emerald-50/50 hover:shadow-inner">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Weight</p>
+                        <span class="text-xl font-black text-slate-800">{{ profile.weight }}<small class="text-xs ml-0.5">kg</small></span>
+                    </div>
+                    <div class="p-5 bg-slate-50 rounded-[2.2rem] border border-slate-100 transition-all hover:bg-emerald-50/50 hover:shadow-inner">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Height</p>
+                        <span class="text-xl font-black text-slate-800">{{ profile.height_feet }}'{{ profile.height_inches }}"</span>
+                    </div>
+                    <div class="p-5 bg-slate-50 rounded-[2.2rem] border border-slate-100 transition-all hover:bg-emerald-50/50 hover:shadow-inner">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Gender</p>
+                        <span class="text-xl font-black text-slate-800">{{ profile.get_gender_display }}</span>
+                    </div>
+                </div>
+
+                <button id="editBtn" class="group relative flex items-center justify-center space-x-3 w-full max-w-sm mx-auto py-5 bg-slate-900 text-white rounded-[1.8rem] font-bold transition-all duration-300 hover:bg-slate-800 hover:-translate-y-1.5 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.3)] active:scale-95 overflow-hidden">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                    <span class="text-xl group-hover:rotate-12 transition-transform">✏️</span>
+                    <span id="btnText" class="text-lg tracking-wide">Edit My Profile</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editFormSection" class="max-w-2xl mx-auto hidden opacity-0 translate-y-8 transition-all duration-700 ease-out">
+        <div class="relative bg-white/80 backdrop-blur-2xl p-10 md:p-14 rounded-[3.5rem] shadow-2xl border border-white/60">
+            <div class="flex items-center space-x-5 mb-12">
+                <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center shadow-inner">
+                    <span class="text-2xl">⚙️</span>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black text-slate-800 tracking-tight">Update Details</h3>
+                    <p class="text-slate-400 text-sm font-medium">Keep your metrics accurate for best results.</p>
+                </div>
+            </div>
+
+            <form method="POST" class="space-y-8">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {% for field in form %}
+                        <div class="{% if 'height' in field.name or 'weight' in field.name or 'age' in field.name %} col-span-1 {% else %} col-span-1 md:col-span-2 {% endif %}">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-3 ml-1">
+                                {{ field.label }}
+                            </label>
+                            <div class="profile-input-wrapper relative group">
+                                {{ field }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pt-8 flex flex-col md:flex-row gap-4">
+                    <button type="submit" class="group relative flex-grow flex items-center justify-center space-x-3 py-5 bg-emerald-600 text-white rounded-2xl font-bold shadow-2xl shadow-emerald-200 hover:bg-emerald-700 hover:-translate-y-1 transition-all active:scale-95 overflow-hidden">
+                        <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                        <span>Save Changes Now</span>
+                    </button>
+                    <button type="button" id="cancelBtn" class="px-10 py-5 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200 transition-all active:scale-95">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const editBtn = document.getElementById('editBtn');
+    const editFormSection = document.getElementById('editFormSection');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const btnText = document.getElementById('btnText');
+
+    function toggleForm() {
+        if (editFormSection.classList.contains('hidden')) {
+            editFormSection.classList.remove('hidden');
+            setTimeout(() => {
+                editFormSection.classList.remove('opacity-0', 'translate-y-8');
+                editFormSection.classList.add('opacity-100', 'translate-y-0');
+            }, 50);
+            btnText.innerText = "Close Editor";
+            editFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            editFormSection.classList.add('opacity-0', 'translate-y-8');
+            editFormSection.classList.remove('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                editFormSection.classList.add('hidden');
+            }, 600);
+            btnText.innerText = "Edit My Profile";
+        }
+    }
+
+    editBtn.addEventListener('click', toggleForm);
+    cancelBtn.addEventListener('click', toggleForm);
+</script>
+
+<style>
+    @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+    .profile-input-wrapper input, .profile-input-wrapper select {
+        width: 100%;
+        padding: 1.25rem 1.5rem;
+        background-color: #f8fafc;
+        border: 2px solid #f1f5f9;
+        border-radius: 1.5rem;
+        outline: none;
+        font-weight: 600;
+        color: #1e293b;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .profile-input-wrapper input:focus, .profile-input-wrapper select:focus {
+        border-color: #10b981;
+        background-color: white;
+        box-shadow: 0 15px 30px -10px rgba(16, 185, 129, 0.15);
+        transform: translateY(-2px);
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+</style>
+{% endblock %}

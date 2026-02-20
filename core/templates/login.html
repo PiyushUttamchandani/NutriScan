@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[75vh] px-4 animate-fade-in">
+    <div class="relative bg-white/80 backdrop-blur-2xl p-8 md:p-12 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-white/60 max-w-md w-full overflow-hidden">
+        
+        <div class="absolute -top-20 -right-20 w-40 h-40 bg-emerald-100/30 rounded-full blur-3xl"></div>
+
+        <div class="text-center mb-10 relative z-10">
+            <div class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-inner rotate-3">
+                <span class="text-3xl">🔐</span>
+            </div>
+            <h2 class="text-3xl font-black text-slate-800 tracking-tight">Welcome Back</h2>
+            <p class="text-slate-500 font-medium mt-1">Log in to track your fitness</p>
+        </div>
+
+        <form method="POST" class="space-y-6 relative z-10">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div>
+                    <div class="flex justify-between items-center mb-2 ml-1">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            {{ field.label }}
+                        </label>
+                        
+                        {% if field.label|lower == "password" %}
+                            <a href="{% url 'password_reset' %}" class="text-[10px] font-black text-[#0fa36b] uppercase tracking-widest hover:text-[#0d8c5c] transition-all hover:underline decoration-2 underline-offset-4">
+                                Forgot Password?
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="relative group">
+                        <input type="{{ field.field.widget.input_type }}" 
+                               name="{{ field.name }}" 
+                               id="{{ field.auto_id }}"
+                               placeholder="Enter your {{ field.label|lower }}"
+                               class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none transition-all duration-300 focus:border-[#0fa36b] focus:bg-white focus:shadow-lg focus:shadow-emerald-100/50"
+                               required>
+                    </div>
+                    {% if field.errors %}
+                        <p class="text-rose-500 text-xs font-bold mt-2 ml-1">{{ field.errors|first }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="pt-4">
+                <button type="submit" class="w-full py-4 bg-[#0fa36b] text-white rounded-2xl font-bold shadow-xl shadow-emerald-200 hover:bg-[#0d8c5c] hover:-translate-y-1 transition-all duration-300 active:scale-95">
+                    Login to NutriScan
+                </button>
+            </div>
+        </form>
+
+        <div class="text-center mt-8 relative z-10">
+            <p class="text-slate-400 font-medium text-sm">
+                Don't have an account? 
+                <a href="{% url 'register' %}" class="text-[#0fa36b] font-bold hover:underline decoration-2 underline-offset-4 transition-all">
+                    Create Account
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+</style>
+{% endblock %}

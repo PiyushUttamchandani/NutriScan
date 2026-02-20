@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8 animate-fade-in">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div>
+            <h2 class="text-4xl font-extrabold text-slate-800 tracking-tight">Performance Insights</h2>
+            <p class="text-slate-500 font-medium mt-1">Tracking your consistency and growth journey.</p>
+        </div>
+        <div class="flex items-center space-x-4 bg-white px-8 py-4 rounded-[2rem] shadow-xl shadow-slate-100 border border-slate-50 border-r-4 border-r-rose-500">
+            <span class="text-3xl animate-bounce">🔥</span>
+            <div>
+                <h4 class="text-2xl font-black text-slate-800 leading-none">{{streak}} Days</h4>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Current Streak</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Workouts Done</p>
+            <div class="flex items-baseline space-x-2">
+                <h3 class="text-4xl font-black text-emerald-600">{{workout_days_count}}</h3>
+                <span class="text-slate-400 font-bold">Days</span>
+            </div>
+        </div>
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Exercises</p>
+            <h3 class="text-4xl font-black text-blue-600">{{total_exercises}}</h3>
+        </div>
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Daily Average</p>
+            <h3 class="text-4xl font-black text-amber-500">{{avg_per_day}}</h3>
+        </div>
+    </div>
+
+    <div class="bg-white p-8 md:p-10 rounded-[3rem] shadow-xl shadow-slate-100 border border-slate-100 mb-16">
+        <div class="flex items-center justify-between mb-8">
+            <h5 class="text-xl font-bold text-slate-800 italic">Workout Intensity</h5>
+            <span class="text-xs font-bold text-slate-400 bg-slate-50 px-4 py-2 rounded-full uppercase tracking-widest">Last 7 Sessions</span>
+        </div>
+        <div class="relative h-[350px] w-full">
+            <canvas id="progressChart"></canvas>
+        </div>
+    </div>
+
+    <div class="max-w-3xl">
+        <h5 class="text-2xl font-bold text-slate-800 mb-8 px-2">Activity History</h5>
+        <div class="space-y-6">
+            {% for date, exercises in grouped_logs.items %}
+            <div class="relative group bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all">
+                <div class="flex justify-between items-center px-8 py-5 bg-slate-50/50 border-b border-slate-50">
+                    <span class="font-bold text-slate-700">{{date}}</span>
+                    <span class="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-full uppercase tracking-wider">
+                        Score: {{daily_score|get_item:date}}
+                    </span>
+                </div>
+                <div class="p-6">
+                    <div class="flex flex-wrap gap-3">
+                        {% for ex in exercises %}
+                            <div class="flex items-center space-x-2 bg-white border border-slate-100 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 shadow-sm">
+                                <span class="text-emerald-500 font-black">✓</span>
+                                <span>{{ex}}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const labels = {{labels|safe}};
+const data = {{values|safe}};
+const ctx = document.getElementById('progressChart').getContext('2d');
+
+// Enhanced Chart.js Styling
+const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+gradient.addColorStop(0, '#10b981'); // Emerald 500
+gradient.addColorStop(1, 'rgba(16, 185, 129, 0.05)');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Exercises',
+            data: data,
+            backgroundColor: gradient,
+            hoverBackgroundColor: '#059669',
+            borderRadius: 12,
+            borderSkipped: false,
+            barThickness: 32
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: '#1e293b',
+                padding: 12,
+                titleFont: { family: 'Poppins', size: 14, weight: 'bold' },
+                bodyFont: { family: 'Poppins', size: 13 },
+                displayColors: false,
+                cornerRadius: 12
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { borderDash: [5, 5], color: '#f1f5f9', drawBorder: false },
+                ticks: { color: '#94a3b8', font: { family: 'Poppins', weight: '600' }, stepSize: 1 }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { color: '#64748b', font: { family: 'Poppins', weight: '600' } }
+            }
+        }
+    }
+});
+</script>
+
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+</style>
+{% endblock %}

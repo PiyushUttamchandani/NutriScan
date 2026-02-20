@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[70vh] py-12 px-4 animate-fade-in">
+    
+    <div class="relative bg-white p-10 md:p-16 rounded-[3rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.06)] border border-slate-50 text-center max-w-lg w-full transform transition-all duration-700">
+        
+        <div class="absolute top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-emerald-100/40 rounded-full blur-3xl -z-10"></div>
+
+        <div class="relative inline-block mb-8">
+            <div class="w-24 h-24 bg-gradient-to-tr from-slate-50 to-white rounded-full flex items-center justify-center shadow-sm border border-slate-100">
+                <span class="text-5xl opacity-80">👤</span>
+            </div>
+        </div>
+
+        <div class="relative z-10">
+            {% if user.is_authenticated %}
+                <h1 class="text-5xl font-black text-slate-800 mb-4 tracking-tight">Welcome</h1>
+                <p class="text-slate-500 text-lg font-medium mb-12 max-w-[280px] mx-auto leading-relaxed">
+                    Your personalized AI health assistant is ready. What's the goal for today?
+                </p>
+
+                <div class="flex flex-col space-y-4">
+                    <a href="{% url 'dashboard' %}" class="flex items-center justify-center space-x-3 py-5 bg-[#0fa36b] text-white rounded-full font-bold shadow-lg shadow-emerald-100 hover:bg-[#0d8c5c] hover:-translate-y-0.5 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span class="text-lg">Open Dashboard</span>
+                    </a>
+                    
+                    <a href="{% url 'profile' %}" class="flex items-center justify-center space-x-3 py-5 bg-white text-slate-700 rounded-full font-bold border border-slate-100 hover:bg-slate-50 transition-all">
+                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span class="text-lg">My Health Profile</span>
+                    </a>
+
+                    <form method="POST" action="{% url 'logout' %}" class="mt-8">
+                        {% csrf_token %}
+                        <button type="submit" class="inline-flex items-center space-x-2 text-slate-400 font-semibold hover:text-rose-500 transition-colors">
+                            <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                            <span class="text-sm">Logout Securely</span>
+                        </button>
+                    </form>
+                </div>
+
+            {% else %}
+                <h1 class="text-5xl font-black text-slate-800 mb-4 tracking-tight">Welcome</h1>
+                <p class="text-slate-500 text-lg font-medium mb-12 max-w-[280px] mx-auto leading-relaxed">
+                    India's smartest AI nutrition partner. Start your journey today.
+                </p>
+
+                <div class="flex flex-col space-y-4">
+                    <a href="{% url 'register' %}" class="py-5 bg-[#0fa36b] text-white rounded-full font-bold shadow-lg shadow-emerald-100 hover:bg-[#0d8c5c] transition-all">
+                        Get Started
+                    </a>
+                    <a href="{% url 'login' %}" class="py-5 bg-white text-slate-700 rounded-full font-bold border border-slate-100 hover:bg-slate-50 transition-all">
+                        Login
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+</style>
+{% endblock %}

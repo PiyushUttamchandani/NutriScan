@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScan | AI Health</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body>
+    <nav class="p-6 max-w-7xl mx-auto flex justify-between items-center">
+        <a href="{% url 'home' %}">
+            <h1 class="text-2xl font-black text-[#0fa36b]">NutriScan</h1>
+        </a>
+
+        <div class="flex items-center space-x-6">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="font-bold text-slate-600 hover:text-[#0fa36b] transition-colors">Dashboard</a>
+                <a href="{% url 'profile' %}" class="font-bold text-slate-600 hover:text-[#0fa36b] transition-colors">Profile</a>
+                
+                <form method="POST" action="{% url 'logout' %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="font-bold text-rose-500 hover:text-rose-600 transition-colors">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="font-bold text-slate-600 hover:text-[#0fa36b] transition-colors">Login</a>
+                <a href="{% url 'register' %}" class="bg-[#0fa36b] text-white px-6 py-2 rounded-full font-bold shadow-lg hover:bg-[#0d8c5c] transition-all transform hover:-translate-y-0.5">
+                    Get Started
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

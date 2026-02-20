@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10 animate-fade-in">
+    
+    <div class="mb-12">
+        <h2 class="text-4xl md:text-5xl font-black text-slate-800 tracking-tight leading-tight">
+            Welcome back, <br>
+            <span class="text-[#0fa36b]">{{user.username}}</span>
+        </h2>
+        <p class="text-slate-500 font-medium mt-3 text-lg">Here's your health summary for today.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        
+        <div class="bg-[#0fa36b] p-10 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(15,163,107,0.3)] text-white transform transition-all hover:-translate-y-1">
+            <p class="text-emerald-100 font-bold uppercase tracking-[0.2em] text-[10px] mb-4">Daily Target</p>
+            <div class="flex items-baseline space-x-2">
+                <h1 class="text-6xl font-black">{{calories}}</h1>
+                <span class="text-emerald-100 font-bold">kcal</span>
+            </div>
+            <div class="mt-6 flex items-center">
+                <span class="bg-white/20 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider">Optimized Plan</span>
+            </div>
+        </div>
+
+        <div class="bg-white p-10 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-50 flex flex-col justify-between transition-all hover:-translate-y-1">
+            <div>
+                <p class="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px] mb-4">BMI Status</p>
+                <h2 class="text-5xl font-black text-slate-800">{{bmi}}</h2>
+            </div>
+            <div class="mt-8">
+                <span class="inline-flex items-center px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm 
+                    {% if category == 'Normal' %} bg-emerald-50 text-[#0fa36b] border border-emerald-100 
+                    {% else %} bg-amber-50 text-amber-600 border border-amber-100 {% endif %}">
+                    <span class="w-2 h-2 rounded-full mr-2 {% if category == 'Normal' %} bg-[#0fa36b] {% else %} bg-amber-500 {% endif %} animate-pulse"></span>
+                    {{category}}
+                </span>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 p-10 rounded-[3rem] shadow-xl text-white flex flex-col justify-center space-y-5 transition-all hover:-translate-y-1">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                <span class="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Weight</span>
+                <span class="text-xl font-black">{{profile.weight}} <small class="text-slate-500 text-xs font-bold uppercase">kg</small></span>
+            </div>
+            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                <span class="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Height</span>
+                <span class="text-xl font-black">{{profile.height_feet}}'{{profile.height_inches}}"</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Goal</span>
+                <span class="text-xl font-black text-[#0fa36b]">{{profile.get_goal_display}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-10">
+        <h4 class="text-2xl font-bold text-slate-800 mb-8 px-2">Recommended Actions</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <a href="{% url 'diet' %}" class="group bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50 transition-all hover:shadow-xl hover:border-emerald-100 hover:-translate-y-1">
+                <div class="flex items-center space-x-6">
+                    <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">🥗</div>
+                    <div>
+                        <h6 class="font-black text-slate-800 text-lg leading-tight">Diet Plan</h6>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Personalized Menu</p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="{% url 'workout' %}" class="group bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50 transition-all hover:shadow-xl hover:border-blue-100 hover:-translate-y-1">
+                <div class="flex items-center space-x-6">
+                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">💪</div>
+                    <div>
+                        <h6 class="font-black text-slate-800 text-lg leading-tight">Workouts</h6>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Daily Routine</p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="{% url 'performance' %}" class="group bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50 transition-all hover:shadow-xl hover:border-amber-100 hover:-translate-y-1">
+                <div class="flex items-center space-x-6">
+                    <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">📈</div>
+                    <div>
+                        <h6 class="font-black text-slate-800 text-lg leading-tight">Insights</h6>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Track Progress</p>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+</style>
+{% endblock %}

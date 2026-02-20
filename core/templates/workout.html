@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-10 animate-fade-in">
+    <div class="text-center mb-12">
+        <h2 class="text-4xl font-extrabold text-slate-800 tracking-tight mb-3">Daily Grind 💪</h2>
+        <p class="text-slate-500 font-medium">Crush these exercises to stay on track for your <span class="text-emerald-600 font-bold underline decoration-emerald-100 underline-offset-4">{{profile.get_goal_display}}</span> goal.</p>
+    </div>
+
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        
+        <div class="space-y-4">
+            <label class="workout-card group relative bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-emerald-100">
+                <input type="checkbox" name="exercise" value="{{plan.exercise_1}}" class="exercise-checkbox w-6 h-6 rounded-lg text-emerald-600 focus:ring-emerald-500 border-slate-200">
+                <div class="ml-6 flex-grow">
+                    <h5 class="text-xl font-bold text-slate-800 transition-all duration-300 group-has-[:checked]:text-slate-400 group-has-[:checked]:line-through">{{plan.exercise_1}}</h5>
+                    <p class="text-slate-400 text-sm font-medium mt-1">Compound Movement • 3 Sets</p>
+                </div>
+                <div class="opacity-10 group-has-[:checked]:opacity-100 transition-opacity duration-300">
+                    <span class="text-2xl">✅</span>
+                </div>
+            </label>
+
+            <label class="workout-card group relative bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-emerald-100">
+                <input type="checkbox" name="exercise" value="{{plan.exercise_2}}" class="exercise-checkbox w-6 h-6 rounded-lg text-emerald-600 focus:ring-emerald-500 border-slate-200">
+                <div class="ml-6 flex-grow">
+                    <h5 class="text-xl font-bold text-slate-800 transition-all duration-300 group-has-[:checked]:text-slate-400 group-has-[:checked]:line-through">{{plan.exercise_2}}</h5>
+                    <p class="text-slate-400 text-sm font-medium mt-1">Focus & Strength • 3 Sets</p>
+                </div>
+                <div class="opacity-10 group-has-[:checked]:opacity-100 transition-opacity duration-300">
+                    <span class="text-2xl">✅</span>
+                </div>
+            </label>
+
+            <label class="workout-card group relative bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-emerald-100">
+                <input type="checkbox" name="exercise" value="{{plan.exercise_3}}" class="exercise-checkbox w-6 h-6 rounded-lg text-emerald-600 focus:ring-emerald-500 border-slate-200">
+                <div class="ml-6 flex-grow">
+                    <h5 class="text-xl font-bold text-slate-800 transition-all duration-300 group-has-[:checked]:text-slate-400 group-has-[:checked]:line-through">{{plan.exercise_3}}</h5>
+                    <p class="text-slate-400 text-sm font-medium mt-1">Finisher • Max Reps</p>
+                </div>
+                <div class="opacity-10 group-has-[:checked]:opacity-100 transition-opacity duration-300">
+                    <span class="text-2xl">✅</span>
+                </div>
+            </label>
+        </div>
+
+        <div class="pt-8 text-center">
+            <button type="submit" class="w-full py-5 bg-emerald-600 text-white rounded-[2rem] font-bold text-lg shadow-2xl shadow-emerald-200 hover:bg-emerald-700 hover:-translate-y-1.5 transition-all duration-300 active:scale-95">
+                Finish & Log Workout
+            </button>
+            <p class="mt-4 text-slate-400 text-sm font-medium">
+                Logging your workout updates your <span class="text-emerald-500 font-bold">Performance Score</span>.
+            </p>
+        </div>
+    </form>
+
+    <div class="mt-12 text-center">
+        <a href="{% url 'dashboard' %}" class="inline-flex items-center text-slate-400 font-bold hover:text-emerald-600 transition-colors group">
+            <svg class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Premium Hover & Checked Effects */
+    .workout-card:has(.exercise-checkbox:checked) {
+        background-color: #f0fdf4; /* emerald-50 */
+        border-color: #10b981; /* emerald-500 */
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+</style>
+{% endblock %}
