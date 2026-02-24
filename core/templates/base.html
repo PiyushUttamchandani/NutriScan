@@ -14,21 +14,10 @@
     </script>
     
     <style>
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            transition: background-color 0.5s ease;
-        }
-        .nav-blur {
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-        .page-fade {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.5s ease; }
+        .nav-blur { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .page-fade { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-500">
@@ -44,22 +33,30 @@
                 </h1>
             </a>
 
+            <div class="hidden md:flex items-center space-x-8">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-[#0fa36b] transition-colors">Dashboard</a>
+                    <a href="{% url 'profile' %}" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-[#0fa36b] transition-colors">Profile</a>
+                    <a href="{% url 'diet' %}" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-[#0fa36b] transition-colors">Diet Plan</a>
+                    <a href="{% url 'performance' %}" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-[#0fa36b] transition-colors">Insights</a>
+                {% endif %}
+            </div>
+
             <div class="flex items-center space-x-4">
                 <button @click="darkMode = !darkMode; localStorage.setItem('dark', darkMode)" 
-                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-yellow-400">
+                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-yellow-400 hover:scale-105 transition-all">
                     <span x-show="!darkMode">🌙</span>
                     <span x-show="darkMode">☀️</span>
                 </button>
 
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="hidden md:block text-sm font-bold opacity-70 hover:opacity-100">Dashboard</a>
-                    <form method="POST" action="{% url 'logout' %}">
+                    <form method="POST" action="{% url 'logout' %}" class="hidden md:block">
                         {% csrf_token %}
-                        <button type="submit" class="text-sm font-extrabold text-rose-500 px-4 py-2">Sign Out</button>
+                        <button type="submit" class="text-sm font-extrabold text-rose-500 px-4 py-2 hover:text-rose-600 transition-colors">Sign Out</button>
                     </form>
                 {% else %}
-                    <a href="{% url 'login' %}" class="text-sm font-bold opacity-70">Login</a>
-                    <a href="{% url 'register' %}" class="bg-slate-900 dark:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm">
+                    <a href="{% url 'login' %}" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-[#0fa36b]">Login</a>
+                    <a href="{% url 'register' %}" class="bg-slate-900 dark:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-xl hover:-translate-y-0.5 transition-all active:scale-95">
                         Get Started
                     </a>
                 {% endif %}
@@ -71,10 +68,11 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-8">
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-10 mt-10">
         <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                &copy; 2026 NutriScan AI • Ahmedabad, Gujarat
+            <h2 class="text-lg font-black text-[#0fa36b] mb-2 italic">NutriScan AI</h2>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.3em]">
+                &copy; 2026 NutriScan Technologies Inc.
             </p>
         </div>
     </footer>
