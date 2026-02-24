@@ -1,71 +1,64 @@
 {% extends 'base.html' %}
-{% load custom_filters %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 py-8 animate-fade-in">
+<div class="max-w-6xl mx-auto px-4 py-8 animate-fade-in bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
+    
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-            <h2 class="text-4xl font-extrabold text-slate-800 tracking-tight">Performance Insights</h2>
-            <p class="text-slate-500 font-medium mt-1">Tracking your consistency and growth journey.</p>
+            <h2 class="text-4xl font-extrabold text-slate-800 dark:text-slate-100 tracking-tight">Performance Insights</h2>
+            <p class="text-slate-500 dark:text-slate-400 font-medium mt-1">Consistency is the key to your fitness success.</p>
         </div>
-        <div class="flex items-center space-x-4 bg-white px-8 py-4 rounded-[2rem] shadow-xl shadow-slate-100 border border-slate-50 border-r-4 border-r-rose-500">
+        <div class="flex items-center space-x-4 bg-white dark:bg-slate-900 px-8 py-4 rounded-[2rem] shadow-xl border border-slate-50 dark:border-slate-800 border-r-4 border-r-rose-500">
             <span class="text-3xl animate-bounce">🔥</span>
             <div>
-                <h4 class="text-2xl font-black text-slate-800 leading-none">{{streak}} Days</h4>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Current Streak</p>
+                <h4 class="text-2xl font-black text-slate-800 dark:text-slate-100 leading-none">{{streak}} Days</h4>
+                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mt-1">Current Streak</p>
             </div>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Workouts Done</p>
-            <div class="flex items-baseline space-x-2">
-                <h3 class="text-4xl font-black text-emerald-600">{{workout_days_count}}</h3>
-                <span class="text-slate-400 font-bold">Days</span>
-            </div>
+            <h3 class="text-4xl font-black text-emerald-600 dark:text-emerald-400">{{workout_days_count}} <span class="text-lg text-slate-400">Days</span></h3>
         </div>
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Exercises</p>
-            <h3 class="text-4xl font-black text-blue-600">{{total_exercises}}</h3>
+            <h3 class="text-4xl font-black text-blue-600 dark:text-blue-400">{{total_exercises}}</h3>
         </div>
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Daily Average</p>
-            <h3 class="text-4xl font-black text-amber-500">{{avg_per_day}}</h3>
+            <h3 class="text-4xl font-black text-amber-500 dark:text-amber-400">{{avg_per_day}}</h3>
         </div>
     </div>
 
-    <div class="bg-white p-8 md:p-10 rounded-[3rem] shadow-xl shadow-slate-100 border border-slate-100 mb-16">
-        <div class="flex items-center justify-between mb-8">
-            <h5 class="text-xl font-bold text-slate-800 italic">Workout Intensity</h5>
-            <span class="text-xs font-bold text-slate-400 bg-slate-50 px-4 py-2 rounded-full uppercase tracking-widest">Last 7 Sessions</span>
-        </div>
+    <div class="bg-white dark:bg-slate-900 p-8 md:p-10 rounded-[3rem] shadow-xl border border-slate-100 dark:border-slate-800 mb-16">
+        <h5 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-8 italic">Workout Intensity (Last 7 Days)</h5>
         <div class="relative h-[350px] w-full">
             <canvas id="progressChart"></canvas>
         </div>
     </div>
 
+    
+
     <div class="max-w-3xl">
-        <h5 class="text-2xl font-bold text-slate-800 mb-8 px-2">Activity History</h5>
+        <h5 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-8">Activity History</h5>
         <div class="space-y-6">
-            {% for date, exercises in grouped_logs.items %}
-            <div class="relative group bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all">
-                <div class="flex justify-between items-center px-8 py-5 bg-slate-50/50 border-b border-slate-50">
-                    <span class="font-bold text-slate-700">{{date}}</span>
-                    <span class="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-full uppercase tracking-wider">
-                        Score: {{daily_score|get_item:date}}
-                    </span>
+            {% for item in performance_history %}
+            <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                <div class="flex justify-between items-center px-8 py-5 bg-slate-50/50 dark:bg-slate-800/50">
+                    <span class="font-bold text-slate-700 dark:text-slate-200">{{ item.date }}</span>
+                    <span class="px-4 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-black rounded-full">Score: {{ item.score }}</span>
                 </div>
-                <div class="p-6">
-                    <div class="flex flex-wrap gap-3">
-                        {% for ex in exercises %}
-                            <div class="flex items-center space-x-2 bg-white border border-slate-100 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 shadow-sm">
-                                <span class="text-emerald-500 font-black">✓</span>
-                                <span>{{ex}}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
+                <div class="p-6 flex flex-wrap gap-3">
+                    {% for ex in item.exercises %}
+                        <div class="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300">✓ {{ ex }}</div>
+                    {% endfor %}
                 </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-20 bg-white dark:bg-slate-900 rounded-[3rem] border border-dashed border-slate-200 dark:border-slate-800">
+                <p class="text-slate-400 dark:text-slate-500 font-medium italic">No activity logs found yet. Time to hit the gym!</p>
             </div>
             {% endfor %}
         </div>
@@ -74,65 +67,48 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const labels = {{labels|safe}};
-const data = {{values|safe}};
-const ctx = document.getElementById('progressChart').getContext('2d');
+document.addEventListener('DOMContentLoaded', function() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    
+    // Gradient Logic
+    const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+    gradient.addColorStop(0, '#10b981');
+    gradient.addColorStop(1, isDark ? 'rgba(16, 185, 129, 0.05)' : 'rgba(16, 185, 129, 0.1)');
 
-// Enhanced Chart.js Styling
-const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-gradient.addColorStop(0, '#10b981'); // Emerald 500
-gradient.addColorStop(1, 'rgba(16, 185, 129, 0.05)');
-
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: labels,
-        datasets: [{
-            label: 'Exercises',
-            data: data,
-            backgroundColor: gradient,
-            hoverBackgroundColor: '#059669',
-            borderRadius: 12,
-            borderSkipped: false,
-            barThickness: 32
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: '#1e293b',
-                padding: 12,
-                titleFont: { family: 'Poppins', size: 14, weight: 'bold' },
-                bodyFont: { family: 'Poppins', size: 13 },
-                displayColors: false,
-                cornerRadius: 12
-            }
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{
+                data: {{ values|safe }},
+                backgroundColor: gradient,
+                borderRadius: 12,
+                barThickness: 32
+            }]
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: { borderDash: [5, 5], color: '#f1f5f9', drawBorder: false },
-                ticks: { color: '#94a3b8', font: { family: 'Poppins', weight: '600' }, stepSize: 1 }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { 
+                legend: { display: false } 
             },
-            x: {
-                grid: { display: false },
-                ticks: { color: '#64748b', font: { family: 'Poppins', weight: '600' } }
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { 
+                        stepSize: 1,
+                        color: isDark ? '#94a3b8' : '#64748b' 
+                    },
+                    grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }
+                },
+                x: { 
+                    grid: { display: false },
+                    ticks: { color: isDark ? '#94a3b8' : '#64748b' }
+                }
             }
         }
-    }
+    });
 });
 </script>
-
-<style>
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in {
-        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-</style>
 {% endblock %}

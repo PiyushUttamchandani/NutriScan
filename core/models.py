@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth.models import User
+from datetime import date
 
 class DietPlan(models.Model):
 
@@ -83,11 +85,29 @@ class WorkoutPlan(models.Model):
         return self.goal
     
 class WorkoutLog(models.Model):
-
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     exercise = models.CharField(max_length=100)
     completed = models.BooleanField(default=False)
+    # Store calories burned for this specific entry
+    calories_burned = models.PositiveIntegerField(default=0) 
     date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.exercise}"
+    
+
+
+class DailyStats(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField(default=date.today)
+    daily_goal = models.IntegerField(default=2200) # Tera static 2200 yahan se aayega
+    calories_consumed = models.IntegerField(default=0)
+    calories_burned = models.IntegerField(default=0)
+
+    @property
+    def remaining_calories(self):
+        # Logic: Target mein se khana minus karo aur workout se mili extra limit add karo
+        return self.daily_goal - self.calories_consumed + self.calories_burned
+
+    def __str__(self):
+        return f"{self.user.username} - {self.date}"

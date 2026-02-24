@@ -1,41 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" x-data="{ darkMode: localStorage.getItem('dark') === 'true' }" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriScan | AI Health</title>
+    <title>NutriScan | AI Health Assistant</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            transition: background-color 0.5s ease;
+        }
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .page-fade {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
     </style>
 </head>
-<body>
-    <nav class="p-6 max-w-7xl mx-auto flex justify-between items-center">
-        <a href="{% url 'home' %}">
-            <h1 class="text-2xl font-black text-[#0fa36b]">NutriScan</h1>
-        </a>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-500">
 
-        <div class="flex items-center space-x-6">
-            {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="font-bold text-slate-600 hover:text-[#0fa36b] transition-colors">Dashboard</a>
-                <a href="{% url 'profile' %}" class="font-bold text-slate-600 hover:text-[#0fa36b] transition-colors">Profile</a>
-                
-                <form method="POST" action="{% url 'logout' %}" class="inline">
-                    {% csrf_token %}
-                    <button type="submit" class="font-bold text-rose-500 hover:text-rose-600 transition-colors">Logout</button>
-                </form>
-            {% else %}
-                <a href="{% url 'login' %}" class="font-bold text-slate-600 hover:text-[#0fa36b] transition-colors">Login</a>
-                <a href="{% url 'register' %}" class="bg-[#0fa36b] text-white px-6 py-2 rounded-full font-bold shadow-lg hover:bg-[#0d8c5c] transition-all transform hover:-translate-y-0.5">
-                    Get Started
-                </a>
-            {% endif %}
-        </div>
-    </nav>
+    <header class="sticky top-0 z-50 w-full border-b border-slate-200/50 dark:border-slate-800/50 nav-blur bg-white/70 dark:bg-slate-950/70">
+        <nav class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="{% url 'home' %}" class="flex items-center space-x-2 group">
+                <div class="w-10 h-10 bg-[#0fa36b] rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
+                    <span class="text-white text-xl">🍃</span>
+                </div>
+                <h1 class="text-2xl font-black text-slate-800 dark:text-white tracking-tighter">
+                    Nutri<span class="text-[#0fa36b]">Scan</span>
+                </h1>
+            </a>
 
-    <main>
+            <div class="flex items-center space-x-4">
+                <button @click="darkMode = !darkMode; localStorage.setItem('dark', darkMode)" 
+                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-yellow-400">
+                    <span x-show="!darkMode">🌙</span>
+                    <span x-show="darkMode">☀️</span>
+                </button>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="hidden md:block text-sm font-bold opacity-70 hover:opacity-100">Dashboard</a>
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-sm font-extrabold text-rose-500 px-4 py-2">Sign Out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="text-sm font-bold opacity-70">Login</a>
+                    <a href="{% url 'register' %}" class="bg-slate-900 dark:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm">
+                        Get Started
+                    </a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow relative">
         {% block content %}{% endblock %}
     </main>
+
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-8">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                &copy; 2026 NutriScan AI • Ahmedabad, Gujarat
+            </p>
+        </div>
+    </footer>
 </body>
 </html>

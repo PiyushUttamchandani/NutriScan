@@ -77,4 +77,9 @@ LOGOUT_REDIRECT_URL = "/"
 
 # --- EMAIL CONFIGURATION FOR NUTRISCAN ---
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# settings.py ke niche add karein
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
