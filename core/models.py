@@ -65,6 +65,14 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class TrainingImage(models.Model):
+    label = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='training_data/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.label} - {self.id}"
     
 class WorkoutPlan(models.Model):
 

@@ -3,3 +3,9 @@ gunicorn
 whitenoise
 djangorestframework
 Pillow
+scikit-learn
+pandas
+numpy
+joblib
+tensorflow-cpu
+opencv-python-headless

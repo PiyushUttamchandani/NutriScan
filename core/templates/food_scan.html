@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-screen bg-transparent page-fade relative overflow-hidden">
+  <div class="max-w-6xl mx-auto px-6 py-12 relative z-10">
+ 
+     <!-- Header -->
+     <div class="text-center mb-12">
+       <div class="inline-flex items-center justify-center w-20 h-20 bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-3xl mb-6 shadow-2xl border border-white/20 floating">
+         <span class="text-4xl">🔮</span>
+       </div>
+       <h1 class="text-4xl md:text-5xl font-black text-slate-800 dark:text-white tracking-tight mb-4">
+         AI Vision <span class="text-emerald-500">Analyzer</span>
+       </h1>
+       <p class="text-slate-500 dark:text-slate-400 max-w-lg mx-auto text-base font-medium leading-relaxed">
+         Upload your meal photo — our neural networks will identify, analyze, and reason about your nutrition in real-time.
+       </p>
+     </div>
+ 
+     <!-- Main Content Grid -->
+     <div class="grid lg:grid-cols-12 gap-8 items-start">
+       
+       <!-- Left Side: Upload (5 columns) -->
+       <div class="lg:col-span-5 space-y-6">
+         <div class="glass rounded-[2.5rem] p-8 shadow-2xl border border-white/20 dark:border-white/5 relative group overflow-hidden">
+           <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all"></div>
+           
+           <div id="drop-zone"
+                class="relative border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl p-8 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-500/5 transition-all duration-500"
+                onclick="document.getElementById('food-image').click()">
+             <div id="drop-placeholder">
+               <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                 <span class="text-2xl">📸</span>
+               </div>
+               <p class="text-slate-700 dark:text-slate-200 font-bold text-lg">Select Photo</p>
+               <p class="text-slate-400 text-xs mt-2 font-medium">Drop high-quality JPG/PNG</p>
+             </div>
+             <img id="preview-img" src="" alt="Preview"
+                  class="hidden max-h-72 mx-auto rounded-2xl object-cover shadow-2xl" />
+           </div>
+           
+           <input type="file" id="food-image" accept="image/*" class="hidden" onchange="handleImageSelect(event)" />
+           
+           <button id="analyze-btn"
+                   onclick="analyzeFood()"
+                   disabled
+                   class="mt-8 w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide transition-all duration-300 transform
+                          bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed uppercase">
+             Start Neural Analysis
+           </button>
+         </div>
+         
+         <div class="glass rounded-3xl p-6 border border-white/20">
+            <h4 class="text-xs font-black text-emerald-500 uppercase tracking-widest mb-3">AI Engine Status</h4>
+            <div class="flex items-center space-x-3">
+                <div class="flex space-x-1">
+                    <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                    <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                </div>
+                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 tracking-wider">LIVE CLOUD SYNC ACTIVE</span>
+            </div>
+         </div>
+       </div>
+
+       <!-- Right Side: Results (7 columns) -->
+       <div class="lg:col-span-7">
+         <!-- Loading State -->
+         <div id="loading-card" class="hidden glass rounded-[2.5rem] p-12 text-center border border-white/20">
+           <div class="flex justify-center mb-6">
+             <div class="relative w-20 h-20">
+               <div class="absolute inset-0 border-4 border-emerald-500/20 rounded-full"></div>
+               <div class="absolute inset-0 border-4 border-emerald-500 rounded-full border-t-transparent animate-spin"></div>
+             </div>
+           </div>
+           <h3 class="text-xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">Neural Processing...</h3>
+           <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Reading image data & performing NLP reasoning</p>
+         </div>
+
+         <!-- Results Card -->
+         <div id="results-card" class="hidden space-y-6">
+           <div class="glass rounded-[2.5rem] p-10 shadow-2xl border border-white/20 dark:border-white/5">
+             
+             <!-- Dish header -->
+             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-8 border-b border-slate-200/50 dark:border-slate-800/50">
+               <div>
+                 <div class="flex items-center space-x-2 mb-2">
+                    <span id="health-tag" class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"></span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">v3.0 Engine</span>
+                 </div>
+                 <h2 id="dish-name" class="text-4xl font-black text-slate-800 dark:text-white tracking-tight"></h2>
+               </div>
+               <div id="health-score-badge" class="flex flex-col items-center justify-center w-20 h-20 rounded-3xl font-black text-2xl shadow-xl"></div>
+             </div>
+
+             <!-- Grid Stats -->
+             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+               <div class="bg-white/50 dark:bg-white/5 rounded-3xl p-5 border border-white/20 text-center">
+                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Calories</p>
+                 <p id="r-calories" class="text-2xl font-black text-slate-800 dark:text-white"></p>
+                 <p class="text-[10px] font-bold text-slate-500">kcal</p>
+               </div>
+               <div class="bg-white/50 dark:bg-white/5 rounded-3xl p-5 border border-white/20 text-center">
+                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Protein</p>
+                 <p id="r-protein" class="text-2xl font-black text-slate-800 dark:text-white"></p>
+                 <p class="text-[10px] font-bold text-slate-500">grams</p>
+               </div>
+               <div class="bg-white/50 dark:bg-white/5 rounded-3xl p-5 border border-white/20 text-center">
+                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Carbs</p>
+                 <p id="r-carbs" class="text-2xl font-black text-slate-800 dark:text-white"></p>
+                 <p class="text-[10px] font-bold text-slate-500">grams</p>
+               </div>
+               <div class="bg-white/50 dark:bg-white/5 rounded-3xl p-5 border border-white/20 text-center">
+                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fat</p>
+                 <p id="r-fat" class="text-2xl font-black text-slate-800 dark:text-white"></p>
+                 <p class="text-[10px] font-bold text-slate-500">grams</p>
+               </div>
+             </div>
+
+             <!-- NLP Analysis Section -->
+             <div class="premium-gradient rounded-3xl p-8 mb-8 text-white shadow-xl relative overflow-hidden group">
+               <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform"></div>
+               <div class="flex items-center space-x-3 mb-4">
+                 <span class="text-xl">🤖</span>
+                 <h4 class="text-xs font-black uppercase tracking-[0.2em]">NLP Neural Insights</h4>
+               </div>
+               <p id="r-tips" class="text-sm font-medium leading-relaxed opacity-90"></p>
+             </div>
+
+             <div class="flex gap-4">
+               <form method="POST" action="{% url 'log_food_scan' %}" class="flex-grow">
+                 {% csrf_token %}
+                 <input type="hidden" id="log-dish-name" name="dish_name" />
+                 <input type="hidden" id="log-calories" name="calories" />
+                 <input type="hidden" id="log-protein" name="protein" />
+                 <input type="hidden" id="log-carbs" name="carbs" />
+                 <input type="hidden" id="log-fat" name="fat" />
+                 <button type="submit" class="w-full py-4 rounded-2xl bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-black text-sm uppercase tracking-widest hover:scale-[1.02] transition-all shadow-2xl">
+                   Commit to Log
+                 </button>
+               </form>
+               <button onclick="resetScan()" class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-white/5 transition-all">
+                 <span class="text-xl">🔄</span>
+               </button>
+             </div>
+           </div>
+         </div>
+
+         <!-- Error Card -->
+         <div id="error-card" class="hidden glass rounded-[2.5rem] p-10 border border-red-500/30 text-center">
+           <div class="w-16 h-16 bg-red-100 dark:bg-red-900/40 rounded-2xl flex items-center justify-center mx-auto mb-6">
+             <span class="text-2xl">⚠️</span>
+           </div>
+           <p id="error-msg" class="text-red-600 dark:text-red-400 font-bold mb-6"></p>
+           <button onclick="resetScan()" class="px-8 py-3 bg-red-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl">
+             Try Again
+           </button>
+         </div>
+       </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let selectedImageBase64 = null;
+
+function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    selectedImageBase64 = e.target.result.split(',')[1];
+    document.getElementById('preview-img').src = e.target.result;
+    document.getElementById('preview-img').classList.remove('hidden');
+    document.getElementById('drop-placeholder').classList.add('hidden');
+    const btn = document.getElementById('analyze-btn');
+    btn.disabled = false;
+    btn.className = 'mt-8 w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide transition-all duration-300 transform bg-emerald-500 text-white hover:scale-[1.02] shadow-2xl hover:shadow-emerald-500/40 cursor-pointer uppercase';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function analyzeFood() {
+  if (!selectedImageBase64) return;
+  document.getElementById('analyze-btn').disabled = true;
+  document.getElementById('loading-card').classList.remove('hidden');
+  document.getElementById('results-card').classList.add('hidden');
+  document.getElementById('error-card').classList.add('hidden');
+
+  try {
+    const response = await fetch('/api/analyze-food/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+      body: JSON.stringify({ image_base64: selectedImageBase64 })
+    });
+    const data = await response.json();
+    document.getElementById('loading-card').classList.add('hidden');
+    if (data.error) throw new Error(data.error);
+    displayResults(data);
+  } catch (err) {
+    document.getElementById('loading-card').classList.add('hidden');
+    document.getElementById('error-msg').textContent = err.message;
+    document.getElementById('error-card').classList.remove('hidden');
+    document.getElementById('analyze-btn').disabled = false;
+  }
+}
+
+function displayResults(data) {
+  document.getElementById('dish-name').textContent = data.dish_name;
+  document.getElementById('r-calories').textContent = data.calories;
+  document.getElementById('r-protein').textContent = data.protein_g;
+  document.getElementById('r-carbs').textContent = data.carbs_g;
+  document.getElementById('r-fat').textContent = data.fat_g;
+  document.getElementById('r-tips').textContent = data.health_tips;
+
+  const healthTag = document.getElementById('health-tag');
+  if (data.is_healthy_status) {
+    healthTag.textContent = 'HEART HEALTHY';
+    healthTag.className = 'px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-500 border border-emerald-500/20';
+  } else {
+    healthTag.textContent = 'HIGH CALORIE';
+    healthTag.className = 'px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-500/20 text-red-500 border border-red-500/20';
+  }
+
+  const badge = document.getElementById('health-score-badge');
+  badge.textContent = data.health_score + '/10';
+  badge.className = `flex flex-col items-center justify-center w-20 h-20 rounded-3xl font-black text-2xl shadow-xl ${data.health_score >= 7 ? 'bg-emerald-500 text-white' : data.health_score >= 4 ? 'bg-yellow-500 text-white' : 'bg-red-500 text-white'}`;
+
+  document.getElementById('log-dish-name').value = data.dish_name;
+  document.getElementById('log-calories').value = data.calories;
+  document.getElementById('log-protein').value = data.protein_g;
+  document.getElementById('log-carbs').value = data.carbs_g;
+  document.getElementById('log-fat').value = data.fat_g;
+
+  document.getElementById('results-card').classList.remove('hidden');
+  document.getElementById('results-card').scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetScan() {
+  selectedImageBase64 = null;
+  document.getElementById('food-image').value = '';
+  document.getElementById('preview-img').classList.add('hidden');
+  document.getElementById('drop-placeholder').classList.remove('hidden');
+  document.getElementById('results-card').classList.add('hidden');
+  document.getElementById('error-card').classList.add('hidden');
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  btn.className = 'mt-8 w-full py-4 px-6 rounded-2xl font-black text-sm tracking-wide transition-all duration-300 transform bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed uppercase';
+}
+</script>
+{% endblock %}

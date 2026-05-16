@@ -22,9 +22,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views # Import this for reset views
+from core.admin import admin_site  # Import custom admin site
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin_site.urls),  # Use custom admin site
     
     
     path('', include('core.urls')),
